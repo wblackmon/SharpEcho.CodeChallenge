@@ -1,6 +1,6 @@
-﻿namespace SharpEcho.CodeChallenge.Api.Team.DTOs
+﻿namespace SharpEcho.CodeChallenge.Web.DTOs
 {
-    public class WinLossDTO
+    public class WinLossRecordDTO
     {
         public string WinningTeam { get; set; }
         public string LosingTeam { get; set; }

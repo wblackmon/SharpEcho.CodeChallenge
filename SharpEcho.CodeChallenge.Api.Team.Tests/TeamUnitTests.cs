@@ -18,7 +18,7 @@ namespace SharpEcho.CodeChallenge.Api.Team.Tests
 
             var team = new Entities.Team
             {
-                Name = "Houston Cougars"
+                Name = "Houston Texans"
             };
 
             var result = controller.GetTeamByName(team.Name).Value;
