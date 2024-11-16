@@ -9,7 +9,7 @@ namespace SharpEcho.CodeChallenge.Api.Team.Tests
     [TestClass]
     public class TeamUnitTests
     {
-        IRepository Repository = new GenericRepository(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetConnectionString("SharpEcho"));
+        IRepository Repository = new GenericRepository(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetConnectionString("SharpEchoDB"));
 
         [TestMethod]
         public void GetTeamByName_ShouldReturnCorrectTeam()

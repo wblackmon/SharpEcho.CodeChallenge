@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "SharpEcho.CodeChallenge.Api.Team\\SharpEcho.CodeChallenge.Api.Team.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "SharpEcho.CodeChallenge.Web\\SharpEcho.CodeChallenge.Web.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

@@ -63,5 +63,7 @@
   <ItemGroup>
     <None Include="Game.sql" />
     <None Include="InsertData.sql" />
+    <None Include="Deploy.SharpEchoDB.sql" />
+    <None Include="Initialize.SharpEchoDb.sql" />
   </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
 
 namespace SharpEcho.CodeChallenge.Web.Controllers
 {
-    public class GamesController : Controller
+    public class GameController : Controller
     {
         public IActionResult Index()
         {

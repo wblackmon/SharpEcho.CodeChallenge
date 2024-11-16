@@ -6,12 +6,13 @@ GO
 CREATE TABLE [dbo].[Game]
 (
     [Id] BIGINT NOT NULL PRIMARY KEY IDENTITY,
-    [TeamAId] BIGINT NOT NULL,
-    [TeamBId] BIGINT NOT NULL,
-    [WinnerId] BIGINT NOT NULL,
-    [GameDate] DATE NOT NULL,
-    FOREIGN KEY (TeamAId) REFERENCES [dbo].[Team](Id),
-    FOREIGN KEY (TeamBId) REFERENCES [dbo].[Team](Id),
-    FOREIGN KEY (WinnerId) REFERENCES [dbo].[Team](Id)
+    [HomeTeamId] BIGINT NOT NULL,
+    [AwayTeamId] BIGINT NOT NULL,
+    [Date] DATETIME NOT NULL,
+    [WinningTeamId] BIGINT NOT NULL,
+    FOREIGN KEY (HomeTeamId) REFERENCES Team(Id),
+    FOREIGN KEY (AwayTeamId) REFERENCES Team(Id),
+    FOREIGN KEY (WinningTeamId) REFERENCES Team(Id)
 );
+
 GO

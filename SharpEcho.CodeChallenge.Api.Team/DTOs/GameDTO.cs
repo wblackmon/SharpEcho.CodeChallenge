@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace SharpEcho.CodeChallenge.Api.Team.Entities
+namespace SharpEcho.CodeChallenge.Api.Team.DTOs
 {
-    public class Game
+    public class GameDTO
     {
-        public long Id { get; set; }
         public long HomeTeamId { get; set; }
         public long AwayTeamId { get; set; }
         public DateTime Date { get; set; }
