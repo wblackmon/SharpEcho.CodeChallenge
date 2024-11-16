@@ -68,11 +68,16 @@ namespace SharpEcho.CodeChallenge.Data
                     Select(x => x.Name);
 
                 connection.Open();
-                // Check if the entity already exists based on unique properties (e.g., Name for Team)
-                var existingEntity = connection.Query<T>("SELECT * FROM " + entity.GetType().Name + " WHERE Name = @Name", entity).FirstOrDefault();
-                if (existingEntity != null)
+                // Check if the entity has a Name property
+                var nameProperty = entity.GetType().GetProperty("Name");
+                if (nameProperty != null)
                 {
-                    throw new InvalidOperationException("Entity with the same unique property already exists.");
+                    // Check if the entity already exists based on the Name property
+                    var existingEntity = connection.Query<T>("SELECT * FROM " + entity.GetType().Name + " WHERE Name = @Name", new { Name = nameProperty.GetValue(entity) }).FirstOrDefault();
+                    if (existingEntity != null)
+                    {
+                        throw new InvalidOperationException("Entity with the same unique property already exists.");
+                    }
                 }
 
                 return connection.Query<long>("INSERT INTO " + entity.GetType().Name + " " +

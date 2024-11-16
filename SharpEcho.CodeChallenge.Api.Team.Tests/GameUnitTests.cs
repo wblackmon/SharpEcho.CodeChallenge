@@ -35,8 +35,8 @@ namespace SharpEcho.CodeChallenge.Api.Team.Tests
             // Create teams
             var homeTeam = new Entities.Team { Name = Guid.NewGuid().ToString() };
             var awayTeam = new Entities.Team { Name = Guid.NewGuid().ToString() };
-            Repository.Insert(homeTeam);
-            Repository.Insert(awayTeam);
+            homeTeam.Id = Repository.Insert(homeTeam);
+            awayTeam.Id = Repository.Insert(awayTeam);
 
             // Create GameDTO
             var gameDTO = new DTOs.GameDTO
@@ -61,7 +61,7 @@ namespace SharpEcho.CodeChallenge.Api.Team.Tests
         }
 
         [TestMethod]
-        public void GetWinLossRecord_ShoulddReturnCorrectWinLossRecord()
+        public void GetGamesByTeamNames_ShoulddReturnCorrectGames()
         {
             var controller = new GamesController(Repository);
 
@@ -86,8 +86,8 @@ namespace SharpEcho.CodeChallenge.Api.Team.Tests
                 Date = DateTime.Now.AddDays(1),
                 WinningTeamId = awayTeam.Id
             };
-            Repository.Insert(game1);
-            Repository.Insert(game2);
+            game1.Id = Repository.Insert(game1);
+            game2.Id = Repository.Insert(game2);
 
             // Get games by team names
             var result = controller.GetGamesByTeamNames(homeTeam.Name, awayTeam.Name).Result as OkObjectResult;
@@ -99,5 +99,54 @@ namespace SharpEcho.CodeChallenge.Api.Team.Tests
             Assert.IsTrue(games.Any(g => g.Id == game1.Id && game1.WinningTeamId == game1.WinningTeamId));
             Assert.IsTrue(games.Any(g => g.Id == game2.Id && game2.WinningTeamId == game2.WinningTeamId));
         }
+
+        [TestMethod]
+        public void GetWinLossRecord_ShouldReturnCorrectWinLossRecord()
+        {
+            var controller = new GamesController(Repository);
+
+            // Create teams
+            var team1 = new Entities.Team { Name = "Dallas Cowboys" };
+            var team2 = new Entities.Team { Name = "Atlanta Falcons" };
+            team1.Id = Repository.Insert(team1);
+            team2.Id = Repository.Insert(team2);
+
+            // Create games
+            for (int i = 0; i < 17; i++)
+            {
+                var game = new Game
+                {
+                    HomeTeamId = team1.Id,
+                    AwayTeamId = team2.Id,
+                    Date = DateTime.Now.AddDays(i),
+                    WinningTeamId = team1.Id
+                };
+                game.Id = Repository.Insert(game);
+            }
+
+            for (int i = 0; i < 11; i++)
+            {
+                var game = new Game
+                {
+                    HomeTeamId = team1.Id,
+                    AwayTeamId = team2.Id,
+                    Date = DateTime.Now.AddDays(17 + i),
+                    WinningTeamId = team2.Id
+                };
+                game.Id = Repository.Insert(game);
+            }
+
+            // Get win-loss record
+            var result = controller.GetWinLossRecord("Dallas Cowboys", "Atlanta Falcons").Result as OkObjectResult;
+            var winLossRecord = result.Value as WinLossDTO;
+
+            // Verify the win-loss record
+            Assert.IsNotNull(winLossRecord);
+            Assert.AreEqual("Dallas Cowboys", winLossRecord.WinningTeam);
+            Assert.AreEqual("Atlanta Falcons", winLossRecord.LosingTeam);
+            Assert.AreEqual(17, winLossRecord.WinningTeamWins);
+            Assert.AreEqual(11, winLossRecord.LosingTeamWins);
+        }
+
     }
 }
