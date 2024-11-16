@@ -60,4 +60,8 @@
   <ItemGroup>
     <Build Include="Team.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Game.sql" />
+    <None Include="InsertData.sql" />
+  </ItemGroup>
 </Project>
