@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -67,6 +68,12 @@ namespace SharpEcho.CodeChallenge.Data
                     Select(x => x.Name);
 
                 connection.Open();
+                // Check if the entity already exists based on unique properties (e.g., Name for Team)
+                var existingEntity = connection.Query<T>("SELECT * FROM " + entity.GetType().Name + " WHERE Name = @Name", entity).FirstOrDefault();
+                if (existingEntity != null)
+                {
+                    throw new InvalidOperationException("Entity with the same unique property already exists.");
+                }
 
                 return connection.Query<long>("INSERT INTO " + entity.GetType().Name + " " +
                     "(" + string.Join(",", properties) + ") VALUES (" +

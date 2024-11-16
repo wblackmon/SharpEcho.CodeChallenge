@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SharpEcho.CodeChallenge.Data;
+using static Dapper.SqlMapper;
 
 namespace SharpEcho.CodeChallenge.Api.Team.Controllers
 {
@@ -25,6 +26,33 @@ namespace SharpEcho.CodeChallenge.Api.Team.Controllers
                 return result.First();
             }
             return NotFound();
+        }
+
+        [HttpPost("Post")]
+        public override ActionResult<Entities.Team> Post(Entities.Team team)
+        {
+            try
+            {
+                var insertedTeamId = Repository.Insert(team);
+                team.Id = insertedTeamId; // Set the ID of the team
+                return CreatedAtAction(nameof(Get), new { id = team.Id }, team);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public override ActionResult<Entities.Team> Delete(long id)
+        {
+            var team = Repository.Get<Entities.Team>(id);
+            if (team == null)
+            {
+                return NotFound();
+            }
+            Repository.Delete<Entities.Team>(id);
+            return NoContent();
         }
     }
 }
