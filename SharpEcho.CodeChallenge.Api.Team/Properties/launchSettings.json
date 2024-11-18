@@ -1,17 +1,4 @@
 {
-  "$schema": "http://json.schemastore.org/launchsettings.json",
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iis": {
-      "applicationUrl": "http://localhost/SharpEcho.CodeChallenge.Api.Team",
-      "sslPort": 0
-    },
-    "iisExpress": {
-      "applicationUrl": "http://localhost:20269",
-      "sslPort": 0
-    }
-  },
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
@@ -30,6 +17,19 @@
       },
       "applicationUrl": "http://localhost:5000"
     },
+    "Kestrel": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:5000"
+    },
+    //"Local IIS": {
+    //  "commandName": "IIS",
+    //  "launchBrowser": true,
+    //  "launchUrl": "api/home"
+    //}
     "Local IIS": {
       "commandName": "IIS",
       "launchBrowser": true,
@@ -37,16 +37,21 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost/SharpEcho.CodeChallenge.Api.Team",
+      "applicationUrl": "http://sharpechoapi",
       "siteName": "SharpEcho.CodeChallenge.Api.Team"
+    }
+  },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://sharpechoapi",
+      "sslPort": 0
     },
-    "Kestrel": {
-      "commandName": "Project",
-      "launchBrowser": true,
-      "applicationUrl": "http://localhost:5000",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+    "iisExpress": {
+      "applicationUrl": "http://localhost:20269",
+      "sslPort": 0
     }
   }
 }

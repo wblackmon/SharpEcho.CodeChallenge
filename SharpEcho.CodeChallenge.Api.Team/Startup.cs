@@ -27,7 +27,7 @@ namespace SharpEcho.CodeChallenge.Api.Team
         {
             services.AddControllers();
 
-            services.Add(new ServiceDescriptor(typeof(IRepository), new GenericRepository(Configuration.GetConnectionString("SharpEcho"))));
+            services.Add(new ServiceDescriptor(typeof(IRepository), new GenericRepository(Configuration.GetConnectionString("SharpEchoDB"))));
 
             // Commenting out Swagger configuration
             /*
@@ -73,7 +73,7 @@ namespace SharpEcho.CodeChallenge.Api.Team
 
             app.UseCors("AllowAllOrigins");
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

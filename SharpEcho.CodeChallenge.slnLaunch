@@ -5,12 +5,12 @@
       {
         "Path": "SharpEcho.CodeChallenge.Api.Team\\SharpEcho.CodeChallenge.Api.Team.csproj",
         "Action": "Start",
-        "DebugTarget": "Local IIS"
+        "DebugTarget": "IIS Express"
       },
       {
         "Path": "SharpEcho.CodeChallenge.Web\\SharpEcho.CodeChallenge.Web.csproj",
         "Action": "Start",
-        "DebugTarget": "Local IIS"
+        "DebugTarget": "IIS Express"
       }
     ]
   }

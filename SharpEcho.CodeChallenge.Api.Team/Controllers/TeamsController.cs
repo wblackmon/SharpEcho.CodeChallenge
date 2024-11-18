@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SharpEcho.CodeChallenge.Api.Team.DTOs;
 using SharpEcho.CodeChallenge.Data;
 using static Dapper.SqlMapper;
 
@@ -18,29 +19,36 @@ namespace SharpEcho.CodeChallenge.Api.Team.Controllers
         }
 
         [HttpGet("GetTeamByName")]
-        public virtual ActionResult<Entities.Team> GetTeamByName(string name)
+        public virtual ActionResult<TeamDTO> GetTeamByName(string name)
         {
             var result = Repository.Query<Entities.Team>("SELECT * FROM Team WHERE Name = @Name", new { Name = name });
             if (result != null && result.Count() > 0)
             {
-                return result.First();
+                var teamDTO = new TeamDTO
+                {
+                    Id = result.First().Id,
+                    Name = result.First().Name
+                };
+                return teamDTO;
             }
             return NotFound();
         }
 
         [HttpPost("Post")]
-        public override ActionResult<Entities.Team> Post(Entities.Team team)
+        public virtual ActionResult<TeamDTO> Post(string teamName)
         {
-            try
+            var team = new Entities.Team
             {
-                var insertedTeamId = Repository.Insert(team);
-                team.Id = insertedTeamId; // Set the ID of the team
-                return CreatedAtAction(nameof(Get), new { id = team.Id }, team);
-            }
-            catch (InvalidOperationException ex)
+                Name = teamName
+            };
+            var teamId = Repository.Insert(team);
+            var teamDTO = new TeamDTO
             {
-                return Conflict(new { message = ex.Message });
-            }
+                Id = teamId,
+                Name = team.Name
+            };
+
+            return CreatedAtAction(nameof(GetTeamByName), new { name = teamName }, teamDTO);
         }
 
         [HttpDelete("{id}")]

@@ -24,8 +24,8 @@ DECLARE @AtlantaFalconsId BIGINT = (SELECT [Id] FROM [dbo].[Team] WHERE [Name] =
 DECLARE @i INT = 1;
 WHILE @i <= 17
 BEGIN
-    INSERT INTO [dbo].[Game] ([HomeTeamId], [AwayTeamId], [Date], [WinningTeamId])
-    VALUES (@DallasCowboysId, @AtlantaFalconsId, GETDATE(), @DallasCowboysId);
+    INSERT INTO [dbo].[Game] ([WinningTeamName], [LosingTeamName], [Date], [WinningTeamId], [LosingTeamId])
+    VALUES ('Dallas Cowboys', 'Atlanta Falcons', GETDATE(), @DallasCowboysId, @AtlantaFalconsId);
     SET @i = @i + 1;
 END
 
@@ -33,8 +33,8 @@ END
 SET @i = 1;
 WHILE @i <= 11
 BEGIN
-    INSERT INTO [dbo].[Game] ([HomeTeamId], [AwayTeamId], [Date], [WinningTeamId])
-    VALUES (@DallasCowboysId, @AtlantaFalconsId, GETDATE(), @AtlantaFalconsId);
+    INSERT INTO [dbo].[Game] ([WinningTeamName], [LosingTeamName], [Date], [WinningTeamId], [LosingTeamId])
+    VALUES ('Atlanta Falcons', 'Dallas Cowboys', GETDATE(), @AtlantaFalconsId, @DallasCowboysId);
     SET @i = @i + 1;
 END
 GO

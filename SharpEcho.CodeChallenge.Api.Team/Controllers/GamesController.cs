@@ -18,32 +18,39 @@ namespace SharpEcho.CodeChallenge.Api.Team.Controllers
         }
 
         [HttpGet("GetGamesByTeamNames")]
-        public virtual ActionResult<List<GameDTO>> GetGamesByTeamNames(string homeTeamName, string awayTeamName)
+        public virtual ActionResult<List<GameDTO>> GetGamesByTeamNames(string team1Name, string team2Name)
         {
-            var homeTeam = Repository.Query<Entities.Team>("SELECT * FROM Team WHERE Name = @Name", new { Name = homeTeamName }).SingleOrDefault();
-            var awayTeam = Repository.Query<Entities.Team>("SELECT * FROM Team WHERE Name = @Name", new { Name = awayTeamName }).SingleOrDefault();
+            var team1 = Repository.Query<Entities.Team>("SELECT * FROM Team WHERE Name = @Name", new { Name = team1Name }).SingleOrDefault();
+            var team2 = Repository.Query<Entities.Team>("SELECT * FROM Team WHERE Name = @Name", new { Name = team2Name }).SingleOrDefault();
 
-            if (homeTeam == null || awayTeam == null)
+            if (team1 == null || team2 == null)
             {
                 return NotFound("One or both teams not found.");
             }
 
-            var games = Repository.Query<Game>("SELECT * FROM Game WHERE HomeTeamId = @HomeTeamId AND AwayTeamId = @AwayTeamId", new { HomeTeamId = homeTeam.Id, AwayTeamId = awayTeam.Id });
+            var games = Repository.Query<Game>(@"
+        SELECT * FROM Game 
+        WHERE (WinningTeamId = @Team1Id AND LosingTeamId = @Team2Id) 
+           OR (WinningTeamId = @Team2Id AND LosingTeamId = @Team1Id)",
+                new { Team1Id = team1.Id, Team2Id = team2.Id });
 
             var gameDTOs = games.Select(g => new GameDTO
             {
                 Id = g.Id,
-                HomeTeamId = g.HomeTeamId,
-                AwayTeamId = g.AwayTeamId,
-                Date = g.Date,
-                WinningTeamId = g.WinningTeamId
-            });
+                WinningTeamName = g.WinningTeamName,
+                LosingTeamName = g.LosingTeamName,
+                WinningTeamId = g.WinningTeamId,
+                LosingTeamId = g.LosingTeamId,
+                Date = g.Date
+            }).ToList();
 
             return Ok(gameDTOs);
         }
 
+
+
         [HttpGet("GetWinLossRecord")]
-        public virtual ActionResult<WinLossDTO> GetWinLossRecord(string firstTeamName, string secondTeamName)
+        public virtual ActionResult<WinLossRecordDTO> GetWinLossRecord(string firstTeamName, string secondTeamName)
         {
             var firstTeam = Repository.Query<Entities.Team>("SELECT * FROM Team WHERE Name = @Name", new { Name = firstTeamName }).FirstOrDefault();
             var secondTeam = Repository.Query<Entities.Team>("SELECT * FROM Team WHERE Name = @Name", new { Name = secondTeamName }).FirstOrDefault();
@@ -53,16 +60,13 @@ namespace SharpEcho.CodeChallenge.Api.Team.Controllers
                 return NotFound("One or both teams not found.");
             }
 
-            var firstTeamWins = Repository.Query<Game>("SELECT * FROM Game WHERE HomeTeamId = @FirstTeamId AND AwayTeamId = @SecondTeamId AND WinningTeamId = @FirstTeamId", new { FirstTeamId = firstTeam.Id, SecondTeamId = secondTeam.Id }).Count();
-            firstTeamWins += Repository.Query<Game>("SELECT * FROM Game WHERE HomeTeamId = @SecondTeamId AND AwayTeamId = @FirstTeamId AND WinningTeamId = @FirstTeamId", new { FirstTeamId = firstTeam.Id, SecondTeamId = secondTeam.Id }).Count();
+            var firstTeamWins = Repository.Query<Game>("SELECT * FROM Game WHERE WinningTeamId = @FirstTeamId AND LosingTeamId = @SecondTeamId", new { FirstTeamId = firstTeam.Id, SecondTeamId = secondTeam.Id }).Count();
+            var secondTeamWins = Repository.Query<Game>("SELECT * FROM Game WHERE WinningTeamId = @SecondTeamId AND LosingTeamId = @FirstTeamId", new { FirstTeamId = firstTeam.Id, SecondTeamId = secondTeam.Id }).Count();
 
-            var secondTeamWins = Repository.Query<Game>("SELECT * FROM Game WHERE HomeTeamId = @FirstTeamId AND AwayTeamId = @SecondTeamId AND WinningTeamId = @SecondTeamId", new { FirstTeamId = firstTeam.Id, SecondTeamId = secondTeam.Id }).Count();
-            secondTeamWins += Repository.Query<Game>("SELECT * FROM Game WHERE HomeTeamId = @SecondTeamId AND AwayTeamId = @FirstTeamId AND WinningTeamId = @SecondTeamId", new { FirstTeamId = firstTeam.Id, SecondTeamId = secondTeam.Id }).Count();
-
-            var winLossRecord = new WinLossDTO
+            var winLossRecord = new WinLossRecordDTO
             {
-                WinningTeam = firstTeamWins > secondTeamWins ? firstTeam.Name : secondTeam.Name,
-                LosingTeam = firstTeamWins > secondTeamWins ? secondTeam.Name : firstTeam.Name,
+                WinningTeamName = firstTeamWins > secondTeamWins ? firstTeam.Name : secondTeam.Name,
+                LosingTeamName = firstTeamWins > secondTeamWins ? secondTeam.Name : firstTeam.Name,
                 WinningTeamWins = firstTeamWins > secondTeamWins ? firstTeamWins : secondTeamWins,
                 LosingTeamWins = firstTeamWins > secondTeamWins ? secondTeamWins : firstTeamWins
             };
@@ -73,18 +77,27 @@ namespace SharpEcho.CodeChallenge.Api.Team.Controllers
 
 
         [HttpPost("Post")]
-        public virtual ActionResult<GameDTO> Post(GameDTO gameDTO)
+        public virtual ActionResult<long> Post(GameDTO gameDTO)
         {
+            var winningTeam = Repository.Query<Entities.Team>("SELECT * FROM Team WHERE Name = @Name", new { Name = gameDTO.WinningTeamName }).SingleOrDefault();
+            var losingTeam = Repository.Query<Entities.Team>("SELECT * FROM Team WHERE Name = @Name", new { Name = gameDTO.LosingTeamName }).SingleOrDefault();
+
+            if (winningTeam == null || losingTeam == null)
+            {
+                return NotFound("One or both teams not found.");
+            }
+
             var game = new Game
             {
-                HomeTeamId = gameDTO.HomeTeamId,
-                AwayTeamId = gameDTO.AwayTeamId,
-                Date = gameDTO.Date,
-                WinningTeamId = gameDTO.WinningTeamId
+                WinningTeamId = winningTeam.Id,
+                LosingTeamId = losingTeam.Id,
+                WinningTeamName = winningTeam.Name,
+                LosingTeamName = losingTeam.Name,
+                Date = gameDTO.Date
             };
             game.Id = Repository.Insert(game);
 
-            return Ok(gameDTO);
+            return Ok(game.Id);
         }
     }
 }

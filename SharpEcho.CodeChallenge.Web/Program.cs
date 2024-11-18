@@ -21,6 +21,9 @@ namespace SharpEcho.CodeChallenge.Web
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.UseKestrel();
+                    webBuilder.UseIISIntegration();
+                    webBuilder.UseIIS();
                 });
     }
 }
