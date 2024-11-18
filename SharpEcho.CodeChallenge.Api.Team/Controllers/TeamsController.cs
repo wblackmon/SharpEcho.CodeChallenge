@@ -60,7 +60,7 @@ namespace SharpEcho.CodeChallenge.Api.Team.Controllers
                 return NotFound();
             }
             Repository.Delete<Entities.Team>(id);
-            return NoContent();
+            return Ok(team);
         }
     }
 }

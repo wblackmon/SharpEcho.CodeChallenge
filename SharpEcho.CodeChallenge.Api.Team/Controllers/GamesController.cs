@@ -29,9 +29,9 @@ namespace SharpEcho.CodeChallenge.Api.Team.Controllers
             }
 
             var games = Repository.Query<Game>(@"
-        SELECT * FROM Game 
-        WHERE (WinningTeamId = @Team1Id AND LosingTeamId = @Team2Id) 
-           OR (WinningTeamId = @Team2Id AND LosingTeamId = @Team1Id)",
+                SELECT * FROM Game 
+                WHERE (WinningTeamId = @Team1Id AND LosingTeamId = @Team2Id) 
+                   OR (WinningTeamId = @Team2Id AND LosingTeamId = @Team1Id)",
                 new { Team1Id = team1.Id, Team2Id = team2.Id });
 
             var gameDTOs = games.Select(g => new GameDTO
@@ -46,8 +46,6 @@ namespace SharpEcho.CodeChallenge.Api.Team.Controllers
 
             return Ok(gameDTOs);
         }
-
-
 
         [HttpGet("GetWinLossRecord")]
         public virtual ActionResult<WinLossRecordDTO> GetWinLossRecord(string firstTeamName, string secondTeamName)
@@ -73,8 +71,6 @@ namespace SharpEcho.CodeChallenge.Api.Team.Controllers
 
             return Ok(winLossRecord);
         }
-
-
 
         [HttpPost("Post")]
         public virtual ActionResult<long> Post(GameDTO gameDTO)
