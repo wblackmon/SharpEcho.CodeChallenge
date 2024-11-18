@@ -58,16 +58,21 @@ namespace SharpEcho.CodeChallenge.Api.Team.Tests
                 Name = Guid.NewGuid().ToString() // Generate a unique team name using a GUID
             };
 
-            var result = controller.Post(team);
-            if (result.Result is ConflictObjectResult conflictResult)
+            var result = controller.Post(team).Result;
+
+            if (result is ConflictObjectResult conflictResult)
             {
                 Assert.AreEqual(409, (int)conflictResult.StatusCode);
             }
-            else
+            else if (result is CreatedResult createdResult)
             {
-                var createdTeam = (Entities.Team)((CreatedAtActionResult)result.Result).Value;
+                var createdTeam = (Entities.Team)createdResult.Value;
                 Assert.AreEqual(team.Name, createdTeam.Name);
                 Assert.IsTrue(createdTeam.Id > 0); // Verify that the ID is set
+            }
+            else
+            {
+                Assert.Fail("Unexpected result type");
             }
         }
 
@@ -80,12 +85,21 @@ namespace SharpEcho.CodeChallenge.Api.Team.Tests
                 Name = Guid.NewGuid().ToString() // Generate a unique team name using a GUID
             };
 
-            var result = controller.Post(team);
-            var teamId = ((Entities.Team)((CreatedAtActionResult)result.Result).Value).Id;
+            var result = controller.Post(team).Result;
 
-            controller.Delete(teamId);
-            var deletedTeam = controller.Get(teamId).Value;
-            Assert.IsNull(deletedTeam);
+            if (result is CreatedResult createdResult)
+            {
+                var createdTeam = (Entities.Team)createdResult.Value;
+                var teamId = createdTeam.Id;
+
+                controller.Delete(teamId);
+                var deletedTeam = controller.Get(teamId).Value;
+                Assert.IsNull(deletedTeam);
+            }
+            else
+            {
+                Assert.Fail("Unexpected result type");
+            }
         }
 
 
