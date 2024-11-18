@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace SharpEcho.CodeChallenge.Web.Controllers
 {
-    public class GameController : Controller
+    public class GamesController : Controller
     {
         private readonly IApiServiceClient _apiServiceClient;
-        public GameController(IApiServiceClient apiServiceClient)
+        public GamesController(IApiServiceClient apiServiceClient)
         {
             _apiServiceClient = apiServiceClient;
         }

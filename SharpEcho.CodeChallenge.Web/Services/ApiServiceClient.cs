@@ -28,7 +28,7 @@ namespace SharpEcho.CodeChallenge.Web.Services
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             var team = new TeamDTO { Name = teamName };
-            var response = await client.PostAsync("teams/post", new StringContent(JsonSerializer.Serialize(team), Encoding.UTF8, "application/json"));
+            var response = await client.PostAsync("teams", new StringContent(JsonSerializer.Serialize(team), Encoding.UTF8, "application/json"));
             response.EnsureSuccessStatusCode();
             var responseBody = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<TeamDTO>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
@@ -41,7 +41,7 @@ namespace SharpEcho.CodeChallenge.Web.Services
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            var response = await client.PostAsync("games/post", new StringContent(JsonSerializer.Serialize(gameDTO), Encoding.UTF8, "application/json"));
+            var response = await client.PostAsync("games", new StringContent(JsonSerializer.Serialize(gameDTO), Encoding.UTF8, "application/json"));
             response.EnsureSuccessStatusCode();
         }
 

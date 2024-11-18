@@ -26,6 +26,17 @@ namespace SharpEcho.CodeChallenge.Web
             services.AddHttpClient<ApiServiceClient>();
             services.AddScoped<IApiServiceClient, ApiServiceClient>();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            });
+
             services.AddControllersWithViews();
         }
 
@@ -43,6 +54,8 @@ namespace SharpEcho.CodeChallenge.Web
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseCors("AllowAllOrigins");
 
             app.UseAuthorization();
 
