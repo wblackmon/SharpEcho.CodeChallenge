@@ -1,9 +1,11 @@
-﻿namespace SharpEcho.CodeChallenge.Web.DTOs
+﻿using System;
+
+namespace SharpEcho.CodeChallenge.Web.DTOs
 {
     public class WinLossDTO
     {
-        public string WinningTeam { get; set; }
-        public string LosingTeam { get; set; }
+        public string WinningTeamName { get; set; }
+        public string LosingTeamName { get; set; }
         public int WinningTeamWins { get; set; }
         public int LosingTeamWins { get; set; }
     }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 
 namespace SharpEcho.CodeChallenge.Data
@@ -64,16 +65,18 @@ namespace SharpEcho.CodeChallenge.Data
         {
             using (var connection = new SqlConnection(ConnectionString))
             {
-                var properties = entity.GetType().GetProperties().Where(x => x.Name != "Id").
-                    Select(x => x.Name);
+                var properties = entity.GetType().GetProperties()
+                    .Where(x => x.Name != "Id" && (x.PropertyType.IsPrimitive || x.PropertyType == typeof(string) || x.PropertyType == typeof(DateTime)))
+                    .Select(x => x.Name);
 
                 connection.Open();
-                // Check if the entity has a Name property
+
+                // Simplified duplicate detection
                 var nameProperty = entity.GetType().GetProperty("Name");
                 if (nameProperty != null)
                 {
-                    // Check if the entity already exists based on the Name property
-                    var existingEntity = connection.Query<T>("SELECT * FROM " + entity.GetType().Name + " WHERE Name = @Name", new { Name = nameProperty.GetValue(entity) }).FirstOrDefault();
+                    var nameValue = nameProperty.GetValue(entity);
+                    var existingEntity = connection.Query<T>("SELECT * FROM " + entity.GetType().Name + " WHERE Name = @Name", new { Name = nameValue }).FirstOrDefault();
                     if (existingEntity != null)
                     {
                         throw new InvalidOperationException("Entity with the same unique property already exists.");
@@ -83,7 +86,7 @@ namespace SharpEcho.CodeChallenge.Data
                 return connection.Query<long>("INSERT INTO " + entity.GetType().Name + " " +
                     "(" + string.Join(",", properties) + ") VALUES (" +
                     string.Join(",", properties.Select(x => "@" + x)) + "); " +
-                    "SELECT SCOPE_IDENTITY()", entity).First();
+                    "SELECT CAST(SCOPE_IDENTITY() as bigint)", entity).Single();
             }
         }
 

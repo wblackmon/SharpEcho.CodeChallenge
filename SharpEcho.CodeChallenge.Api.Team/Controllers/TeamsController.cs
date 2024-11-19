@@ -34,21 +34,21 @@ namespace SharpEcho.CodeChallenge.Api.Team.Controllers
             return NotFound();
         }
 
-        [HttpPost("Post")]
-        public virtual ActionResult<TeamDTO> Post(string teamName)
+        [HttpPost("AddTeam")]
+        public virtual ActionResult<TeamDTO> AddTeam(TeamDTO teamDTO)
         {
             var team = new Entities.Team
             {
-                Name = teamName
+                Name = teamDTO.Name 
             };
             var teamId = Repository.Insert(team);
-            var teamDTO = new TeamDTO
+            var createdTeamDTO = new TeamDTO
             {
                 Id = teamId,
                 Name = team.Name
             };
 
-            return CreatedAtAction(nameof(GetTeamByName), new { name = teamName }, teamDTO);
+            return CreatedAtAction(nameof(GetTeamByName), new { name = teamDTO.Name }, teamDTO);
         }
 
         [HttpDelete("{id}")]

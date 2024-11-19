@@ -1,12 +1,14 @@
-﻿using SharpEcho.CodeChallenge.Web.DTOs;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using SharpEcho.CodeChallenge.Web.DTOs;
 
 namespace SharpEcho.CodeChallenge.Web.Services
 {
     public interface IApiServiceClient
     {
-        Task<TeamDTO> AddTeam(string id);
-        Task RecordGame(GameDTO gameDTO);
-        Task<WinLossDTO> GetWinLossRecord(string homeTeamName, string awayTeamName);
+        Task<TeamDTO> AddTeamAsync(string teamName);
+        Task RecordMatchAsync(GameDTO gameDTO);
+        Task<WinLossDTO> GetWinLossRecordAsync(string firstTeamName, string secondTeamName);
     }
 }
+
+

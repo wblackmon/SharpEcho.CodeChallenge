@@ -1,62 +1,45 @@
-﻿using Microsoft.Extensions.Configuration;
-using SharpEcho.CodeChallenge.Web.DTOs;
-using System;
+﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using SharpEcho.CodeChallenge.Web.DTOs;
 
 namespace SharpEcho.CodeChallenge.Web.Services
 {
     public class ApiServiceClient : IApiServiceClient
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly string _baseUri;
+        private readonly HttpClient _httpClient;
 
-        public ApiServiceClient(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+        public ApiServiceClient(HttpClient httpClient)
         {
-            _httpClientFactory = httpClientFactory;
-            _baseUri = configuration["ApiSettings:BaseUri"];
+            _httpClient = httpClient;
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public async Task<TeamDTO> AddTeam(string teamName)
+        public async Task<TeamDTO> AddTeamAsync(string teamName)
         {
-            var client = _httpClientFactory.CreateClient();
-            client.BaseAddress = new Uri(_baseUri);
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            var team = new TeamDTO { Name = teamName };
-            //var response = await client.PostAsync("teams", new StringContent(JsonSerializer.Serialize(team), Encoding.UTF8, "application/json"));
-            var response = await client.PostAsync("teams", new StringContent(JsonSerializer.Serialize(team), Encoding.UTF8, "application/json"));
+            var teamDTO = new TeamDTO { Name = teamName };
+            var content = new StringContent(JsonConvert.SerializeObject(teamDTO), System.Text.Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync("Teams/AddTeam", content);
             response.EnsureSuccessStatusCode();
-            var responseBody = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<TeamDTO>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<TeamDTO>(jsonResponse);
         }
 
-        public async Task RecordGame(GameDTO gameDTO)
+        public async Task RecordMatchAsync(GameDTO gameDTO)
         {
-            var client = _httpClientFactory.CreateClient();
-            client.BaseAddress = new Uri(_baseUri);
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            var response = await client.PostAsync("games", new StringContent(JsonSerializer.Serialize(gameDTO), Encoding.UTF8, "application/json"));
+            var content = new StringContent(JsonConvert.SerializeObject(gameDTO), System.Text.Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync("Games/Post", content);
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task<WinLossDTO> GetWinLossRecord(string homeTeamName, string awayTeamName)
+        public async Task<WinLossDTO> GetWinLossRecordAsync(string firstTeamName, string secondTeamName)
         {
-            var client = _httpClientFactory.CreateClient();
-            client.BaseAddress = new Uri(_baseUri);
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            var response = await client.GetAsync($"games/GetWinLossRecord?firstTeamName={homeTeamName}&secondTeamName={awayTeamName}");
+            var response = await _httpClient.GetAsync($"Games/GetWinLossRecord?firstTeamName={firstTeamName}&secondTeamName={secondTeamName}");
             response.EnsureSuccessStatusCode();
-            var responseBody = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<WinLossDTO>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<WinLossDTO>(jsonResponse);
         }
     }
 }
