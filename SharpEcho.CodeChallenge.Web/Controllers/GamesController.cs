@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using SharpEcho.CodeChallenge.Web.DTOs;
 using System;
+using System.Reflection.Metadata.Ecma335;
 
 namespace SharpEcho.CodeChallenge.Web.Controllers
 {
@@ -19,6 +20,13 @@ namespace SharpEcho.CodeChallenge.Web.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmDeleteAll()
+        {
+            await _apiServiceClient.DeleteAllRecordsAsync();
+            return View("Index");
         }
 
         [HttpPost]

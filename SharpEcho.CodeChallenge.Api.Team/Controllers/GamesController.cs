@@ -6,6 +6,7 @@ using SharpEcho.CodeChallenge.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 
 namespace SharpEcho.CodeChallenge.Api.Team.Controllers
 {
@@ -94,6 +95,15 @@ namespace SharpEcho.CodeChallenge.Api.Team.Controllers
             game.Id = Repository.Insert(game);
 
             return Ok(game.Id);
+        }
+
+        [HttpDelete("DeleteAll")]
+        public virtual ActionResult DeleteAll()
+        {
+            // Delete all records in the Game table
+            Repository.Query<Game>("DELETE FROM [dbo].[Game]", null);
+            Repository.Query<Game>("DELETE FROM [dbo].[Team]", null);
+            return NoContent();
         }
     }
 }

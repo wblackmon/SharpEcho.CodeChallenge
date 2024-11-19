@@ -8,6 +8,7 @@ namespace SharpEcho.CodeChallenge.Web.Services
         Task<TeamDTO> AddTeamAsync(string teamName);
         Task RecordMatchAsync(GameDTO gameDTO);
         Task<WinLossDTO> GetWinLossRecordAsync(string firstTeamName, string secondTeamName);
+        public Task DeleteAllRecordsAsync();
     }
 }
 

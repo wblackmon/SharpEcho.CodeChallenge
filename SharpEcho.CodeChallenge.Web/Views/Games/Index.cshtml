@@ -14,9 +14,9 @@
         <div class="col-md-3">
             <h2>Actions</h2>
             <div class="list-group" id="actionTabs" role="tablist">
-                <a class="list-group-item list-group-item-action active" id="add-teams-tab" data-bs-toggle="pill" href="#add-teams" role="tab" aria-controls="add-teams" aria-selected="true">Add Teams</a>
-                <a class="list-group-item list-group-item-action" id="record-matches-tab" data-bs-toggle="pill" href="#record-matches" role="tab" aria-controls="record-matches" aria-selected="false">Record Matches</a>
-                <a class="list-group-item list-group-item-action" id="win-loss-record-tab" data-bs-toggle="pill" href="#win-loss-record" role="tab" aria-controls="win-loss-record" aria-selected="false">Get Win-Loss Record</a>
+                <a class="list-group-item list-group-item-action active" id="add-teams-tab" data-toggle="pill" href="#add-teams" role="tab" aria-controls="add-teams" aria-selected="true">Add Teams</a>
+                <a class="list-group-item list-group-item-action" id="record-games-tab" data-toggle="pill" href="#record-games" role="tab" aria-controls="record-games" aria-selected="false">Record Games</a>
+                <a class="list-group-item list-group-item-action" id="win-loss-record-tab" data-toggle="pill" href="#win-loss-record" role="tab" aria-controls="win-loss-record" aria-selected="false">Get Win-Loss Record</a>
             </div>
         </div>
 
@@ -25,64 +25,86 @@
             <div class="tab-content" id="actionTabsContent">
                 <!-- Add Teams Tab -->
                 <div class="tab-pane fade show active" id="add-teams" role="tabpanel" aria-labelledby="add-teams-tab">
-                    <h2>Add Teams</h2>
-                    <p>Click the button below to add the Dallas Cowboys and Atlanta Falcons to the team list.</p>
-                    <form asp-action="AddTeams" asp-controller="Games" method="post">
-                        <button type="submit" class="btn btn-primary">Add Dallas Cowboys and Atlanta Falcons</button>
-                    </form>
-
-                    @if (ViewBag.AddedTeams != null)
-                    {
-                        <div class="mt-3">
-                            <h3>Teams Added:</h3>
-                            <ul class="list-group">
-                                @foreach (var team in ViewBag.AddedTeams)
-                                {
-                                    <li class="list-group-item">@team.Name</li>
-                                }
-                            </ul>
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h2>Delete All Records</h2>
+                            <p>Are you sure you want to delete all records in the Game and Team tables? This action cannot be undone.</p>
+                            <form asp-action="ConfirmDeleteAll" method="post" onsubmit="return confirm('Are you sure you want to delete all records?');">
+                                <button type="submit" class="btn btn-danger">Delete All</button>
+                                <a asp-action="Index" asp-controller="Games" class="btn btn-secondary">Cancel</a>
+                            </form>
                         </div>
-                    }
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h2>Add Teams</h2>
+                            <p>Click the button below to add the Dallas Cowboys and Atlanta Falcons to the team list.</p>
+                            <form asp-action="AddTeams" asp-controller="Games" method="post">
+                                <button type="submit" class="btn btn-primary">Add Dallas Cowboys and Atlanta Falcons</button>
+                            </form>
+
+                            @if (ViewBag.AddedTeams != null)
+                            {
+                                <div class="mt-3">
+                                    <h3>Teams Added:</h3>
+                                    <ul class="list-group">
+                                        @foreach (var team in ViewBag.AddedTeams)
+                                        {
+                                            <li class="list-group-item">@team.Name</li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Record Matches Tab -->
-                <div class="tab-pane fade" id="record-matches" role="tabpanel" aria-labelledby="record-matches-tab">
-                    <h2>Record Matches</h2>
-                    <p>Click the button below to record 28 matches between the teams.</p>
-                    <form asp-action="RecordMatches" asp-controller="Games" method="post">
-                        <button type="submit" class="btn btn-primary">Record 28 Matches</button>
-                    </form>
+                <!-- Record Games Tab -->
+                <div class="tab-pane fade" id="record-games" role="tabpanel" aria-labelledby="record-games-tab">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2>Record Games</h2>
+                            <p>Click the button below to record 28 games between the teams.</p>
+                            <form asp-action="RecordGames" asp-controller="Games" method="post">
+                                <button type="submit" class="btn btn-primary">Record 28 Games</button>
+                            </form>
 
-                    @if (ViewBag.RecordedMatches != null)
-                    {
-                        <div class="mt-3">
-                            <h3>Matches Recorded:</h3>
-                            <ul class="list-group">
-                                @foreach (var match in ViewBag.RecordedMatches)
-                                {
-                                    <li class="list-group-item">Match on @match.Date: @match.WinningTeamName vs @match.LosingTeamName</li>
-                                }
-                            </ul>
+                            @if (ViewBag.RecordedGames != null)
+                            {
+                                <div class="mt-3">
+                                    <h3>Games Recorded:</h3>
+                                    <ul class="list-group">
+                                        @foreach (var game in ViewBag.RecordedGames)
+                                        {
+                                            <li class="list-group-item">Game on @game.Date: @game.WinningTeamName vs @game.LosingTeamName</li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
                         </div>
-                    }
+                    </div>
                 </div>
 
                 <!-- Get Win-Loss Record Tab -->
                 <div class="tab-pane fade" id="win-loss-record" role="tabpanel" aria-labelledby="win-loss-record-tab">
-                    <h2>Get Win-Loss Record</h2>
-                    <p>Click the button below to get the win-loss record between the Dallas Cowboys and Atlanta Falcons.</p>
-                    <form asp-action="GetWinLossRecord" asp-controller="Games" method="post">
-                        <button type="submit" class="btn btn-primary">Get Win-Loss Record</button>
-                    </form>
+                    <div class="card">
+                        <div class="card-body">
+                            <h2>Get Win-Loss Record</h2>
+                            <p>Click the button below to get the win-loss record between the Dallas Cowboys and Atlanta Falcons.</p>
+                            <form asp-action="GetWinLossRecord" asp-controller="Games" method="post">
+                                <button type="submit" class="btn btn-primary">Get Win-Loss Record</button>
+                            </form>
 
-                    @if (ViewBag.WinLossRecord != null)
-                    {
-                        <div class="mt-3">
-                            <h3>Win-Loss Record between Dallas Cowboys and Atlanta Falcons:</h3>
-                            <p>@ViewBag.WinLossRecord.WinningTeamName Wins: @ViewBag.WinLossRecord.WinningTeamWins</p>
-                            <p>@ViewBag.WinLossRecord.LosingTeamName Wins: @ViewBag.WinLossRecord.LosingTeamWins</p>
+                            @if (ViewBag.WinLossRecord != null)
+                            {
+                                <div class="mt-3">
+                                    <h3>Win-Loss Record between Dallas Cowboys and Atlanta Falcons:</h3>
+                                    <p>@ViewBag.WinLossRecord.WinningTeamName Wins: @ViewBag.WinLossRecord.WinningTeamWins</p>
+                                    <p>@ViewBag.WinLossRecord.LosingTeamName Wins: @ViewBag.WinLossRecord.LosingTeamWins</p>
+                                </div>
+                            }
                         </div>
-                    }
+                    </div>
                 </div>
             </div>
         </div>

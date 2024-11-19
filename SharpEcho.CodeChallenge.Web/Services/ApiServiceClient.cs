@@ -16,6 +16,12 @@ namespace SharpEcho.CodeChallenge.Web.Services
             _httpClient = httpClient;
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
+        
+        public async Task DeleteAllRecordsAsync()
+        {
+            var response = await _httpClient.DeleteAsync("Games/DeleteAll");
+            response.EnsureSuccessStatusCode();
+        }
 
         public async Task<TeamDTO> AddTeamAsync(string teamName)
         {

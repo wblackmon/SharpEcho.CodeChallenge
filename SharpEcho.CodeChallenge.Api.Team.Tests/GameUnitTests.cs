@@ -20,8 +20,9 @@ namespace SharpEcho.CodeChallenge.Api.Team.Tests
         [TestInitialize]
         public void InitializeDatabase()
         {
-            // Delete all records in the Game table
-            Repository.Query<Game>("DELETE FROM [dbo].[Game]", null);
+            // Delete all records in the Game and Team tables
+            //Repository.Query<Game>("DELETE FROM [dbo].[Game]", null);
+            //Repository.Query<Game>("DELETE FROM [dbo].[Team]", null);
 
             // Delete specific records in the Game table
             Repository.Query<Game>("DELETE FROM [dbo].[Game] WHERE WinningTeamId IN (SELECT Id FROM [dbo].[Team] WHERE [Name] IN ('Dallas Cowboys', 'Atlanta Falcons')) AND LosingTeamId IN (SELECT Id FROM [dbo].[Team] WHERE [Name] IN ('Dallas Cowboys', 'Atlanta Falcons'))", null);
